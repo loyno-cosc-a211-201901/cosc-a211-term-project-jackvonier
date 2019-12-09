@@ -1,5 +1,5 @@
-/* Jack's music player
-    A music player that plays one of 5 tracks in a selected genre
+/* Jack's song information program
+    This program will provide information on a selected song
     James vonier
     12/2/19*/
 
@@ -9,6 +9,13 @@
     //Load file names and project them on the screen. It would take a little bit of reworking, but I could get it.  
 
 
+#include <iomanip>      
+#include <dirent.h>     
+#include <fstream>  
+#include <iostream> 
+#include <stdlib.h>
+
+using namespace std;
 
 
 
@@ -16,10 +23,11 @@
 
 
 
-
+/*
 #include <iostream>
 #include <fstream>
 using namespace std;
+*/
 
 ////////////////////
 //Global Variables//
@@ -27,16 +35,21 @@ using namespace std;
 
 bool cancel = false;                    //Cancel the current genre
 bool quit = false;                      //Quit program
-string test = "Test failed!";           //THIS IS CALLED TEST BC IT TESTS WHETHER OR NOT THE FILE OPENED
+string title = "Title not found!";
+string artist = "Artist not Found!";
+string album = "Album not Found!";
+string run_time = "Run Time not Found!";
+string release_date = "Release Date not Found";
+string url = "URL not Found!";
 //Genre Directories
 const string CHILL_FOLDER_PATH = "C:\\Users\\banda\\Documents\\GitHub\\cosc-a211-term-project-jackvonier\\music\\chill";
 const string ROCK_FOLDER_PATH = "C:\\Users\\banda\\Documents\\GitHub\\cosc-a211-term-project-jackvonier\\music\\rock";
 //Song file names
-const string FIRST_SONG_FILE = "song1.txt";
-const string SECOND_SONG_FILE = "song2.txt";
-const string THIRD_SONG_FILE = "song3.txt";
-const string FOURTH_SONG_FILE = "song4.txt";
-const string FIFTH_SONG_FILE = "song5.txt";
+string first_song_file = "song1.txt";
+string second_song_file = "song2.txt";
+string third_song_file = "song3.txt";
+string fourth_song_file = "song4.txt";
+string fifth_song_file = "song5.txt";
 
 
 
@@ -47,6 +60,8 @@ const string FIFTH_SONG_FILE = "song5.txt";
 int load_song (string file_dir);
 int track_select(int selected_genre);
 int open_genre(int selection);
+void list_dir(string directory);
+
 
 
 
@@ -70,7 +85,7 @@ int main(){
 
         //Prompts/main menu
         cout << "-----------------------------Welcome------------------------------" << endl;
-        cout << "Welcome to Jack's Music Player! Please select your genre of music!" << endl;
+        cout << "Welcome to Jack's Song Information Program! Please select your genre of music!" << endl;
         cout << "1. Chill\n2. Rock\n3. Quit Program\nInput: ";
         cin >> genre;
 
@@ -99,15 +114,38 @@ int main(){
 //Declaring the function to open files
 int load_song (string file_dir){
     ifstream fileHandle;
+    //Open the file
     fileHandle.open (file_dir);
     if (!fileHandle){
         cout << "Failed to open " + file_dir << endl;
         return 1;
     }
 
-    //Assign test variable
-    fileHandle >> test;
+    //Get the song information
 
+    for (int index = 0; index < 6; index++){
+        switch (index){
+            case 0:
+                fileHandle >> title;
+                break;
+            case 1:
+                fileHandle >> artist;
+                break;
+            case 2:
+                fileHandle >> album;
+                break;
+            case 3:
+                fileHandle >> run_time;
+                break;
+            case 4:
+                fileHandle >> release_date;
+                break;
+            case 5:
+                fileHandle >> url;
+                break;
+        }
+    }
+    //close the file
     fileHandle.close();
     return 0;
 }
@@ -120,22 +158,24 @@ int track_select(int selected_genre){
 
     //The input for the selected track
     int input;
-    string song_file = "Error (line 96) song file not defined!\n";
-    string file_dir = "Error (line 97) file directory not defined\n";
+    string song_file = "Error (line 161) song file not defined!\n";
+    string file_dir = "Error (line 162) file directory not defined\n";
 
     //If the genre is Chill
     if (selected_genre == 1){
         //Setting file directory
         file_dir = CHILL_FOLDER_PATH;
         
+        
         //Prompts
-        cout << "TRACKLIST:" << endl;
-        cout << "1. First Chill Song" << endl;
-        cout << "2. Second Chill Song" << endl;
-        cout << "3. Third Chill Song" << endl;
-        cout << "4. Fourth Chill Song" << endl;
-        cout << "5. Fifth Chill Song" << endl;
-        cout << "6. Cancel" << endl;
+        list_dir(file_dir);
+        // cout << "TRACKLIST:" << endl;
+        // cout << "1. First Chill Song" << endl;
+        // cout << "2. Second Chill Song" << endl;
+        // cout << "3. Third Chill Song" << endl;
+        // cout << "4. Fourth Chill Song" << endl;
+        // cout << "5. Fifth Chill Song" << endl;
+        // cout << "6. Cancel" << endl;
 
         //Get the input
         cout << "Input: ";
@@ -145,23 +185,23 @@ int track_select(int selected_genre){
         switch (input){
             case 1:
                 cout << "Selected chill 1 \n";
-                song_file = FIRST_SONG_FILE;
+                song_file = first_song_file;
                 break;
             case 2:
                 cout << "Selected chill 2 \n";
-                song_file = SECOND_SONG_FILE;
+                song_file = second_song_file;
                 break;
             case 3:
                 cout << "Selected chill 3 \n";
-                song_file = THIRD_SONG_FILE;
+                song_file = third_song_file;
                 break;
             case 4:
                 cout << "Selected chill 4 \n";
-                song_file = FOURTH_SONG_FILE;
+                song_file = fourth_song_file;
                 break;
             case 5:
                 cout << "Selected chill 5 \n";
-                song_file = FIFTH_SONG_FILE;
+                song_file = fifth_song_file;
                 break;
             case 6:
                 cout << "\nCancelled. Returning to main menu" << endl;
@@ -180,14 +220,15 @@ int track_select(int selected_genre){
         //Setting file directory
         file_dir = ROCK_FOLDER_PATH;
 
-        //Prompts
-        cout << "TRACKLIST:" << endl;
-        cout << "1. First Rock Song" << endl;
-        cout << "2. Second Rock Song" << endl;
-        cout << "3. Third Rock Song" << endl;
-        cout << "4. Fourth Rock Song" << endl;
-        cout << "5. Fifth Rock Song" << endl;
-        cout << "6. Cancel" << endl;
+        //Prompt
+        list_dir(file_dir);
+        // cout << "TRACKLIST:" << endl;
+        // cout << "1. First Rock Song" << endl;
+        // cout << "2. Second Rock Song" << endl;
+        // cout << "3. Third Rock Song" << endl;
+        // cout << "4. Fourth Rock Song" << endl;
+        // cout << "5. Fifth Rock Song" << endl;
+        // cout << "6. Cancel" << endl;
 
         //Get the input
         cout << "Input: ";
@@ -197,23 +238,23 @@ int track_select(int selected_genre){
         switch (input){
             case 1:
                 cout << "Selected rock 1 \n";
-                song_file = FIRST_SONG_FILE;
+                song_file = first_song_file;
                 break;
             case 2:
                 cout << "Selected rock 2 \n";
-                song_file = SECOND_SONG_FILE;
+                song_file = second_song_file;
                 break;
             case 3:
                 cout << "Selected rock 3 \n";
-                song_file = THIRD_SONG_FILE;
+                song_file = third_song_file;
                 break;
             case 4:
                 cout << "Selected rock 4 \n";
-                song_file = FOURTH_SONG_FILE;
+                song_file = fourth_song_file;
                 break;
             case 5:
                 cout << "Selected rock 5 \n";
-                song_file = FIFTH_SONG_FILE;
+                song_file = fifth_song_file;
                 break;
             case 6:
                 cout << "\nCancelled. Returning to main menu" << endl;
@@ -253,8 +294,52 @@ int track_select(int selected_genre){
 
 }
 
+//List the songs and order them
+void list_dir(string directory){
+    DIR * dir;
+    struct dirent* entry;
+    dir = opendir (directory.c_str());
 
 
+    cout << "Please select your song: " << endl;
+
+    //Loop through
+    for(int i=0; i<7; i++){
+
+        entry=readdir(dir); 
+
+        //Order Songs
+        switch (i){
+            case 2:
+                first_song_file = ("%s\n",entry->d_name);
+                cout << i - 1 << ". ";
+                printf("%s\n",entry->d_name);
+                break;
+            case 3:
+                second_song_file = ("%s\n",entry->d_name);
+                cout << i - 1 << ". ";
+                printf("%s\n",entry->d_name);
+                break;
+            case 4:
+                third_song_file = ("%s\n",entry->d_name);
+                cout << i - 1 << ". ";
+                printf("%s\n",entry->d_name);
+                break;
+            case 5:
+                fourth_song_file = ("%s\n",entry->d_name);
+                cout << i - 1 << ". ";
+                printf("%s\n",entry->d_name);
+                break;
+            case 6:
+                fifth_song_file = ("%s\n",entry->d_name);
+                cout << i - 1 << ". ";
+                printf("%s\n",entry->d_name);
+                break;
+        }
+        
+    }
+    cout << "6. Cancel" << endl;
+}
 
 //Declaring the genre selection function
 int open_genre(int selection){
@@ -269,9 +354,14 @@ int open_genre(int selection){
                 return 1;
             }
 
-            if (!cancel){   //Don't bother playing the song if cancelling
-                //Actually play the song
-                cout << "The song playing is: " << test << endl;            //I have the file dir and I can read from the file
+            if (!cancel){
+                //Print the info
+                cout << "The song title is: " << title << endl;            //I have the file dir and I can read from the file
+                cout << "The artist is: " << artist << endl;
+                cout << "The album is: " << album << endl;
+                cout << "The release date is: " << release_date << endl;
+                cout << "The run time is: " << run_time << endl;
+                cout << "You can listen to the song at: " << url << endl;
                 cout << "------------------------------------------------------------------\n\n\n\n" << endl;
             }
             break;
@@ -281,9 +371,14 @@ int open_genre(int selection){
             if (track_select(selection) == 1){
                 return 1;
             }
-            if (!cancel){   //Don't bother playing the song if cancelling
-                //Actually play the song
-                cout << "The song playing is: " << test << endl;            //I have the file dir and I can read from the file
+            if (!cancel){
+                //Print the info
+                cout << "The song title is: " << title << endl;            //I have the file dir and I can read from the file
+                cout << "The artist is: " << artist << endl;
+                cout << "The album is: " << album << endl;
+                cout << "The release date is: " << release_date << endl;
+                cout << "The run time is: " << run_time << endl;
+                cout << "You can listen to the song at: " << url << endl;
                 cout << "------------------------------------------------------------------\n\n\n\n" << endl;
             }
             break;
@@ -299,3 +394,4 @@ int open_genre(int selection){
 
         return 0;
 }
+
