@@ -9,7 +9,11 @@
 			"files.autoSave": "onWindowChange",
 			"files.hotExit": "off",
 			"files.associations": {
-				"iostream": "cpp"
+				"iostream": "cpp",
+				"cstdlib": "cpp",
+				"iomanip": "cpp",
+				"*.tcc": "cpp",
+				"fstream": "cpp"
 			},
 		}
 }
