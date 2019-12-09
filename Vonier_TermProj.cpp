@@ -23,12 +23,6 @@ using namespace std;
 
 
 
-/*
-#include <iostream>
-#include <fstream>
-using namespace std;
-*/
-
 ////////////////////
 //Global Variables//
 ////////////////////
@@ -42,14 +36,17 @@ string run_time = "Run Time not Found!";
 string release_date = "Release Date not Found";
 string url = "URL not Found!";
 //Genre Directories
-const string CHILL_FOLDER_PATH = "C:\\Users\\banda\\Documents\\GitHub\\cosc-a211-term-project-jackvonier\\music\\chill";
-const string ROCK_FOLDER_PATH = "C:\\Users\\banda\\Documents\\GitHub\\cosc-a211-term-project-jackvonier\\music\\rock";
+string chill_folder_path = "C:\\Users\\banda\\Documents\\GitHub\\cosc-a211-term-project-jackvonier\\music\\chill";
+string rock_folder_path = "C:\\Users\\banda\\Documents\\GitHub\\cosc-a211-term-project-jackvonier\\music\\rock";
 //Song file names
 string first_song_file = "song1.txt";
 string second_song_file = "song2.txt";
 string third_song_file = "song3.txt";
 string fourth_song_file = "song4.txt";
 string fifth_song_file = "song5.txt";
+//Start up variable
+bool first_time = true;
+
 
 
 
@@ -61,6 +58,7 @@ int load_song (string file_dir);
 int track_select(int selected_genre);
 int open_genre(int selection);
 void list_dir(string directory);
+int get_dir();
 
 
 
@@ -82,6 +80,15 @@ int main(){
     while (!quit){
         //resetting cancel var
         cancel = false;
+        
+        //Checking first time variable
+        if (first_time){
+            if (get_dir() == 1){
+                return 1;
+            }else{
+                first_time = false;
+            }
+        }
 
         //Prompts/main menu
         cout << "-----------------------------Welcome------------------------------" << endl;
@@ -164,7 +171,7 @@ int track_select(int selected_genre){
     //If the genre is Chill
     if (selected_genre == 1){
         //Setting file directory
-        file_dir = CHILL_FOLDER_PATH;
+        file_dir = chill_folder_path;
         
         
         //Prompts
@@ -218,7 +225,7 @@ int track_select(int selected_genre){
     //If the genre is rock
     }else if (selected_genre == 2){
         //Setting file directory
-        file_dir = ROCK_FOLDER_PATH;
+        file_dir = rock_folder_path;
 
         //Prompt
         list_dir(file_dir);
@@ -395,3 +402,67 @@ int open_genre(int selection){
         return 0;
 }
 
+int get_dir(){
+    char cust_dir;
+    string new_dir;
+    bool new_dir_correct = false;
+    char new_dir_confirmed;
+    //Prompt
+    cout << "Welcome to Jack's Song Information Program!" << endl;
+    cout << "Would you like to enter a custom Directory? If not the default directory will be used. (y/n)\nThe default directory is C:\\Users\\banda\\Documents\\GitHub\\cosc-a211-term-project-jackvonier\\music" << endl;
+    cout << "Input: ";
+
+    //Getting input
+    cin >> cust_dir;
+
+    //Validate the input for the y/n question.
+    switch (cust_dir){
+        case 'y':
+        case 'Y':
+            while (!new_dir_correct){
+                cout << "Please enter your directory for your music file. (This file should contain the two\ngenre files that come with the program)" << endl;
+                cout << "Input: ";
+                cin >> new_dir;
+                cout << "Awesome! Your directory is: " << new_dir << " \n Is this correct? (y/n)" << endl;
+                cout << "Input: ";
+                cin >> new_dir_confirmed;
+
+                //validate if the new directory has been confirmed
+                switch (new_dir_confirmed){
+                    case 'y':
+                    case 'Y':
+                        cout << "Directory confirmed." << endl;
+
+                        //Changing the directories for the genres
+                        chill_folder_path = new_dir + "\\chill";
+                        rock_folder_path = new_dir + "\\rock";
+
+                        //break the while loop
+                        new_dir_correct = true;
+
+                        break;
+                    case 'n':
+                    case 'N':
+                        //repeat the while loop
+                        break;
+                    default:
+                        cout << "Invalid input, please try again" << endl;
+                        break;
+                        
+                
+                }
+            }
+            break;
+        case 'n':
+        case 'N':
+            cout << "Awesome! The default directory has been selected!" << endl;
+            chill_folder_path = "C:\\Users\\banda\\Documents\\GitHub\\cosc-a211-term-project-jackvonier\\music\\chill";
+            rock_folder_path = "C:\\Users\\banda\\Documents\\GitHub\\cosc-a211-term-project-jackvonier\\music\\rock";
+            break;
+        default:
+            cout << "Invalid input!" << endl;
+            return 1;
+            break;
+    }
+    return 0;
+}
